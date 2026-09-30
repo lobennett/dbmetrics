@@ -1,7 +1,7 @@
 # dbp-metrics
 
 Offline video measurements, separate from the DBP website.
-This first extraction preserves existing CPU algorithms; it does not establish scientific validity.
+Existing CPU, OCR and Qwen computations are preserved; exploratory methods are separate.
 
 ## Use
 
@@ -28,7 +28,16 @@ uv run jupyter lab
 ```
 
 The metric walkthrough includes a demo MP4; the API walkthrough connects to a running DBP website.
-New scientific methods belong in small exploratory notebooks first, then independent manual evaluation,
-then tested package code. Website integration follows review—not notebook execution.
+See `VALIDATION.md` for evaluation requirements.
 
-OCR/VLM extraction is the next batch. Running cluster jobs and website imports are unchanged.
+## Text and logos
+
+`dbp_metrics.ocr` detects text regions using a supplied local Paddle checkpoint.
+`dbp_metrics.evidence.EvidenceVideo` verifies an OCR report against its video.
+`dbp_metrics.overlay.OverlayRuntime` uses OCR-guided images and the pinned Qwen model.
+`dbp_metrics.captions.CaptionWatermarkRuntime.infer_images` uses the compact observation prompt.
+See `TEXT.md` for dependencies and usage. Neither runtime downloads weights.
+
+`dbp_metrics.experimental` contains half-video similarity, continuity diagnostics
+and affect-rating CSV helpers. These are not automatically included in CPU results.
+Website, review UI and cluster scheduling code remain outside this package.

@@ -2,8 +2,8 @@
 
 This package computes offline metrics. It does not serve the website or submit cluster jobs.
 
-- Follow `SCIENCE.md`: define, inspect, manually evaluate, then integrate.
-- Work on one scientific experiment at a time. Do not add speculative website features.
+- Follow `VALIDATION.md`: inspect, evaluate, then integrate.
+- Keep experimental methods separate from established computations.
 - Preserve established formulas, sampling, missingness and evidence during extraction.
 - Algorithm or model changes require separate evaluation; passing code tests is not scientific validation.
 - Do not switch running jobs, alter shared environments, or launch large runs as part of refactoring.

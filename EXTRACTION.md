@@ -14,7 +14,10 @@ Both notebooks and the demo asset were copied from website commit
 `14f73a895ad00a90fc1b0b76bef3880a296351df`, preserving their existing outputs.
 The old copies are retained until the new repository is published and checked.
 
-OCR/Qwen code is not extracted in this first batch. Experimental affect, embedding and review-page code is not promoted.
+The second extraction adds dense OCR, both frozen Qwen prompts, local model
+validation and a single-video evidence reader. Existing half-video similarity,
+continuity and affect CSV helpers live under `experimental`; no review-page,
+website or cluster orchestration code is ported. Original sources remain intact.
 
 ## Local verification
 

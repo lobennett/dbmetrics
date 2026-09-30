@@ -36,3 +36,21 @@ uv run python -m unittest discover -s tests -v
 
 This verifies faithful CPU extraction—not scientific validity of a proxy or OCR/VLM accuracy.
 No production jobs or website imports have been switched to this package.
+
+## OCR/Qwen and exploratory extraction
+
+The expanded suite ran 233 tests: 232 passed; the optional original-CPU comparison
+was skipped in this run (its previous 53-video comparison is recorded above).
+Tests include real FFmpeg decoding, report transport, response parsing, sampling,
+mocked generation, deadlines and experimental helper/CLI behavior.
+Pillow crop tests ran in the notebook environment; no GPU model was loaded.
+
+Twenty existing real OCR reports were accepted against their hash-matched media,
+and their selected frame sets were bounded to eight frames.
+The OCR, half-similarity, continuity and affect modules are byte-identical to their
+original implementations. Every function/class in both Qwen modules has an
+identical AST after removing imports; only module paths changed. Frozen prompt
+hashes and model revisions are tested.
+
+This port has not rerun Paddle or Qwen inference on a GPU. It does not provide a
+new classification-accuracy estimate or promote experimental methods to validated ones.
