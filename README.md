@@ -41,3 +41,6 @@ See `TEXT.md` for dependencies and usage. Neither runtime downloads weights.
 `dbp_metrics.experimental` contains half-video similarity, continuity diagnostics
 and affect-rating CSV helpers. These are not automatically included in CPU results.
 Website, review UI and cluster scheduling code remain outside this package.
+
+Existing worker commands delegate through compatibility wrappers; see `INTEGRATION.md`.
+Start similarity exploration with `notebooks/half-video-similarity.ipynb`.

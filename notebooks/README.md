@@ -33,3 +33,6 @@ The notebook uses `data/nsd_subj01.mp4`, so no path edits are required. CPU metr
 `api-interface-walkthrough.ipynb` connects to a running DBP website. The environment includes a pinned API client and the local metrics package. Run its cells individually: creating experiments and tracking trials changes account data.
 
 In VS Code, select `notebooks/.venv/bin/python` as the kernel.
+
+`half-video-similarity.ipynb` shows the sampled halves, RGB histogram comparison
+and an optional pinned V-JEPA comparison. The default run is local and downloads nothing.

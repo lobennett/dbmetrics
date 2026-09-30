@@ -54,3 +54,17 @@ hashes and model revisions are tested.
 
 This port has not rerun Paddle or Qwen inference on a GPU. It does not provide a
 new classification-accuracy estimate or promote experimental methods to validated ones.
+
+## Worker integration, 0.3.0
+
+330 package tests ran: 329 passed; the optional original-CPU comparison was skipped.
+The run included website artifact validators via an explicitly supplied website
+test tree. Another 129 website extraction/scoring/research tests passed with
+the compatibility wrappers and installed package. OCR adapter tests passed (25),
+caption batch tests passed (23), persistent worker tests passed (5), controller
+tests passed (6), and evaluation adapter tests passed (20).
+
+The new similarity notebook executed on the bundled MP4: both halves decoded,
+sampled frames displayed and the RGB histogram cosine computed. V-JEPA was
+disabled; no weights were downloaded. The executed notebook was saved outside Git.
+No cluster job, live deployment or GPU inference was started or changed.
