@@ -19,6 +19,25 @@ Other stages are `visual`, `audio`, `technical` and `ffmpeg_cuts`.
 Failed/missing values remain unknown. Source files are never modified.
 If your default FFmpeg has removed `-vsync`, pass a compatible binary via `ffmpeg='/path/to/ffmpeg'`; do not interpret decode failures as measurements.
 
+## Source statistics
+
+Source views, likes, and comments describe the original YouTube video. Join them
+to clips by `source_id`; they are not measurements of clip engagement.
+
+```sh
+uv sync --extra youtube
+uv run python -m dbp_metrics.cli.youtube_sources --catalog /data/catalog.sqlite3 --provider youtube --output /data/source-statistics.jsonl --limit 10
+```
+
+This uses yt-dlp's Python API without downloading media or requiring an API key.
+It records retrieval times; counts may be rounded and unavailable counts remain
+null. Use `--provider catalog` for archived views, whose collection date is unknown.
+After inspecting the pilot, use `--all` for all remaining sources (default: two
+seconds between requests). Rerunning resumes the same output, skipping recorded
+sources, including failures. Use a new output for retries or refreshed counts.
+The collector stops on access/rate-limit responses. Neither the original catalog
+nor the website is modified. Freeze a copy before importing it into the website.
+
 ## Notebooks
 
 ```sh

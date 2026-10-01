@@ -1,5 +1,10 @@
 # Metric computation walkthrough
 
+`source-statistics.ipynb` demonstrates archived source counts, an optional live
+YouTube lookup, and how clips inherit those values. Set `DBP_CATALOG` to a local
+catalog path. For live retrieval, install the root package's `youtube` extra in
+the notebook environment: `uv pip install --python .venv/bin/python -e '..[youtube]'`.
+
 This notebook follows one bundled MP4 from decoded frames to the metrics used by the DBP browser. It keeps the calculations explicit so each value can be inspected rather than treating the production pipeline as a black box.
 
 ## Requirements
