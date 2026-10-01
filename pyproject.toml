@@ -10,6 +10,7 @@ requires-python = ">=3.10,<3.13"
 dependencies = []
 
 [project.optional-dependencies]
+youtube = ["yt-dlp==2026.8.19"]
 technical = ["numpy>=2,<3", "opencv-python-headless>=4.10,<5"]
 notebooks = ["ipykernel>=6.29", "jupyterlab>=4.2", "matplotlib>=3.9", "nbconvert>=7.16", "numpy>=2,<3", "opencv-python-headless>=4.10,<5"]
 
