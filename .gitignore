@@ -5,3 +5,11 @@ __pycache__/
 dist/
 .dbp/
 dbp-demo-download/
+notebooks/data/half-similarity-demo.mp4
+.lavish/
+notebooks/notebook-results/
+notebooks/third-party/
+notebooks/models/
+notebook-results/
+third-party/
+models/

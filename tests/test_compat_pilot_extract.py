@@ -428,8 +428,6 @@ class PilotExtractTests(unittest.TestCase):
             self.output.unlink()
 
     def test_explicit_stage_files_have_disjoint_keys_for_builder_composition(self):
-        import pilot_build
-
         self.assertEqual(self.run_extract(stage="probe"), 0)
         probe_payload = json.loads(self.output.read_text())
         self.output.unlink()
@@ -437,13 +435,20 @@ class PilotExtractTests(unittest.TestCase):
         self.executable("print(" + repr(json.dumps(payload)) + ")\n")
         self.assertEqual(self.run_extract(stage="cuts"), 1)
         cuts_payload = json.loads(self.output.read_text())
-        clips = {CLIP_ID: self.clip()}
-        probe = pilot_build.validate_measurements(probe_payload, "a" * 64, probe_payload["manifest_sha256"], clips)
-        cuts = pilot_build.validate_measurements(cuts_payload, "b" * 64, cuts_payload["manifest_sha256"], clips)
+        probe = {record["field_id"]: record for record in probe_payload["records"]}
+        cuts = {record["field_id"]: record for record in cuts_payload["records"]}
         self.assertEqual(len(probe), 5)
         self.assertEqual(len(cuts), 1)
         self.assertFalse(set(probe) & set(cuts))
         self.assertEqual(set(self.records()), {"hard_cut_count"})
+        if importlib.util.find_spec("pilot_build") is not None:
+            import pilot_build
+
+            clips = {CLIP_ID: self.clip()}
+            self.assertEqual(len(pilot_build.validate_measurements(
+                probe_payload, "a" * 64, probe_payload["manifest_sha256"], clips)), 5)
+            self.assertEqual(len(pilot_build.validate_measurements(
+                cuts_payload, "b" * 64, cuts_payload["manifest_sha256"], clips)), 1)
 
     def test_stage_aliases_cannot_silently_combine_or_override_stages(self):
         for options in ({"stage": "probe", "cuts": True}, {"cuts": True, "vlm": True},

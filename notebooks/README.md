@@ -1,38 +1,30 @@
-# Metric computation walkthrough
+# Notebooks
 
-This notebook follows one bundled MP4 from decoded frames to the metrics used by the DBP browser. It keeps the calculations explicit so each value can be inspected rather than treating the production pipeline as a black box.
-
-## Requirements
-
-- Python 3.11–3.12
-- [`uv`](https://docs.astral.sh/uv/)
-- `ffmpeg` and `ffprobe`
-
-Install FFmpeg with `brew install ffmpeg` on macOS or `sudo apt install ffmpeg` on Ubuntu.
+| Notebook | Purpose |
+| --- | --- |
+| [website-metrics.ipynb](website-metrics.ipynb) | Existing website metrics, step by step on one video. |
+| [exploratory-metrics.ipynb](exploratory-metrics.ipynb) | Similarity, transitions, event changes, affect and interest before integration. |
+| [api-walkthrough.ipynb](api-walkthrough.ipynb) | Sign in, inspect metrics, create assignments, download stimuli and track trials. |
 
 ## Run
 
-```bash
+Requires Python 3.11–3.12, `uv`, `ffmpeg` and `ffprobe`.
+
+```sh
 cd notebooks
 uv sync
-uv run jupyter lab metric-computation-walkthrough.ipynb
+uv run jupyter lab
 ```
 
-To execute every cell without opening Jupyter:
+In VS Code, select `notebooks/.venv/bin/python`. Run cells individually: API creation and trial tracking change account data; previews do not. A running website and your account are required for the API notebook.
 
-```bash
-uv run jupyter nbconvert \
-  --to notebook \
-  --execute \
-  --inplace \
-  metric-computation-walkthrough.ipynb
+The website notebook uses bundled `data/nsd_subj01.mp4`; text labels are demonstrations, not inference. The exploratory notebook uses a local gardening clip if available; otherwise supply your own video. Helpers live in `src/dbp_metrics/experimental/`. Keep generated data and private reviews out of Git.
+
+## Optional V-JEPA
+
+```sh
+uv sync --group vjepa
+uv run --group vjepa python -c 'from huggingface_hub import snapshot_download; from dbp_metrics.experimental.half_similarity import MODEL_ID, MODEL_REVISION; snapshot_download(MODEL_ID, revision=MODEL_REVISION, allow_patterns=["*.json", "*.safetensors"])'
 ```
 
-The notebook uses `data/nsd_subj01.mp4`, so no path edits are required. CPU metrics run locally. The final text-label section explains the OCR/Qwen pipeline and uses reviewed demonstration labels; it does not download model weights or run the production VLM.
-
-`api-interface-walkthrough.ipynb` connects to a running DBP website. The environment includes a pinned API client and the local metrics package. Run its cells individually: creating experiments and tracking trials changes account data.
-
-In VS Code, select `notebooks/.venv/bin/python` as the kernel.
-
-`half-video-similarity.ipynb` shows the sampled halves, RGB histogram comparison
-and an optional pinned V-JEPA comparison. The default run is local and downloads nothing.
+The explicit weight download is large. Restart the kernel, then set `RUN_VJEPA = True`. Other model runs also require cached weights and explicit opt-in. Exploratory results are not validated website metrics.

@@ -11,6 +11,7 @@ dependencies = []
 
 [project.optional-dependencies]
 technical = ["numpy>=2,<3", "opencv-python-headless>=4.10,<5"]
+youtube = ["yt-dlp==2026.8.19"]
 notebooks = ["ipykernel>=6.29", "jupyterlab>=4.2", "matplotlib>=3.9", "nbconvert>=7.16", "numpy>=2,<3", "opencv-python-headless>=4.10,<5"]
 
 [tool.hatch.build.targets.wheel]
