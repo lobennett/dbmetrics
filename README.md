@@ -5,7 +5,8 @@ Existing CPU, OCR and Qwen computations are preserved; exploratory methods are s
 
 ## Use
 
-Install FFmpeg (including `ffprobe`; the preserved pipeline requires a version accepting `-vsync 0`), then:
+Install FFmpeg and `ffprobe`. The preserved pipeline is tested with FFmpeg 4.2.2;
+newer versions can change frame timing and diagnostics, not just CLI flags. Then:
 
 ```sh
 uv sync --extra technical
@@ -17,9 +18,14 @@ DBP_TEST_FFMPEG=/path/to/compatible/ffmpeg uv run python -m unittest discover -s
 Use `stages=['probe']` for duration, dimensions, frame rate and audio-track presence.
 Other stages are `visual`, `audio`, `technical` and `ffmpeg_cuts`.
 Failed/missing values remain unknown. Source files are never modified.
-If your default FFmpeg has removed `-vsync`, pass a compatible binary via `ffmpeg='/path/to/ffmpeg'`; do not interpret decode failures as measurements.
+Pass the compatible binary via `ffmpeg='/path/to/ffmpeg'` or the CLI's `--ffmpeg`;
+do not interpret decode failures as measurements. Verify a canary on your worker runtime.
 
 ## Notebooks
+
+- `notebooks/website-metrics.ipynb`: existing computations.
+- `notebooks/exploratory-metrics.ipynb`: candidate methods, not production metrics.
+- `notebooks/api-walkthrough.ipynb`: website access and experiment workflow.
 
 ```sh
 cd notebooks
@@ -44,6 +50,40 @@ Website, review UI and cluster scheduling code remain outside this package.
 
 Existing worker commands delegate through compatibility wrappers; see `INTEGRATION.md`.
 Explore candidate metrics in `notebooks/exploratory-metrics.ipynb`.
+
+## Catalog → measurements → website
+
+The catalog identifies clips; the MP4 files supply the pixels and audio.
+Export a fixed selection from the catalog into a manifest:
+
+```json
+{"schema_version":"dbt1-evidence-manifest-v1","clips":[{"clip_id":"--42OoF8WJM_part_00000011","source_id":"--42OoF8WJM","part":11}]}
+```
+
+Run the package's existing batch interface on that selection:
+
+```sh
+uv run python -m dbp_metrics.legacy \
+  --manifest /data/manifest.json --media-root /data/videos \
+  --media-kind rendition --stage probe \
+  --output /data/results/probe.json --run-id probe-v1
+```
+
+Use separate output files and run IDs for `visual`, `audio`, `technical` and
+`ffmpeg_cuts`. For renditions, media paths are the first two hex characters of
+SHA-1(clip ID), followed by `<clip_id>.mp4`; originals are directly under the
+media root. Do not assume archived catalog paths are current locations.
+
+Each output record identifies the clip and metric, value or unknown, processing
+status, media hash and evidence. Failed measurements are not zero. The website
+imports these artifacts into its metric index; this package never rewrites the
+catalog or website index. Manifest export, cluster scheduling and artifact import
+remain outside this computation package. Start with a small canary, then shard
+the manifest using `--offset` and `--limit` with distinct outputs.
+
+For Python use, `measure_video(path, clip_id=...)` computes the sixteen CPU records
+for one MP4; save its returned records with your run's provenance. OCR and Qwen
+need their separately configured local checkpoints; they are not implicit CPU stages.
 
 ## Source statistics
 
