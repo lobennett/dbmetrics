@@ -23,8 +23,8 @@ class SimilarityComparisonsTests(unittest.TestCase):
             "ffmpeg": "ffmpeg", "ffprobe": "ffprobe"})(), plt=plt,
             embedding_changes=[], change_times=[], manual_boundaries=[],
             decoded={"duration_seconds": 10})
-        with patch("dbp_metrics.experimental.scene_continuity.measure", return_value=continuity), \
-             patch("dbp_metrics._cuts.detect_ffmpeg_cuts", return_value=failed), \
+        with patch("dbmetrics.experimental.scene_continuity.measure", return_value=continuity), \
+             patch("dbmetrics._cuts.detect_ffmpeg_cuts", return_value=failed), \
              patch("subprocess.run") as probe:
             probe.return_value.stdout = "{}"
             exec(self.cells["continuity-comparison"], namespace)

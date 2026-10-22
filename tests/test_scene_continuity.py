@@ -10,7 +10,7 @@ import unittest
 
 import numpy as np
 
-from dbp_metrics.experimental.scene_continuity import Config, analyze_frames, measure, run_bounded
+from dbmetrics.experimental.scene_continuity import Config, analyze_frames, measure, run_bounded
 
 
 class DiagnosticTests(unittest.TestCase):
@@ -112,7 +112,7 @@ class DecoderTests(unittest.TestCase):
                 self.assertIn('ffmpeg_version', result['provenance'])
 
     def cli(self, *arguments):
-        return subprocess.run([sys.executable, '-m', 'dbp_metrics.cli.scene_continuity', *map(str, arguments)],
+        return subprocess.run([sys.executable, '-m', 'dbmetrics.cli.scene_continuity', *map(str, arguments)],
                               capture_output=True, text=True, timeout=30)
 
     def test_json_resume_and_policy_conflict_do_not_overwrite(self):

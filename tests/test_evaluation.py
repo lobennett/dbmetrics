@@ -1,5 +1,5 @@
 import unittest
-from dbp_metrics.evaluation import score_target, target_label
+from dbmetrics.evaluation import score_target, target_label
 
 
 class EvaluationTests(unittest.TestCase):

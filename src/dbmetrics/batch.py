@@ -22,7 +22,7 @@ import time
 
 if __name__ == "__main__" and not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    __package__ = "dbp_metrics"
+    __package__ = "dbmetrics"
 
 from .legacy import (MAX_MEDIA_BYTES, MAX_WORKER_BYTES, SEMANTIC_FIELDS,
                            bounded_number, empty_records, extract_clip,
@@ -290,7 +290,7 @@ def interrupted(signum, frame):
 
 if __name__ == "__main__" and not __package__:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    __package__ = "dbp_metrics"
+    __package__ = "dbmetrics"
     signal.signal(signal.SIGTERM, interrupted)
     if len(sys.argv) == 3 and sys.argv[1] == "--worker":
         worker_main(strict_json(sys.argv[2]))

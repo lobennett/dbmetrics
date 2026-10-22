@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 
 
-from dbp_metrics.experimental.half_similarity import Config, VJEPABackend, measure, provenance, request_key
+from dbmetrics.experimental.half_similarity import Config, VJEPABackend, measure, provenance, request_key
 
 
 def main(argv=None):

@@ -29,9 +29,9 @@ PROBE = {
 class PilotExtractTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics.legacy")
+            self.subject = importlib.import_module("dbmetrics.legacy")
         except ModuleNotFoundError:
-            self.fail("dbp_metrics.legacy implementation is not available")
+            self.fail("dbmetrics.legacy implementation is not available")
         temporary = tempfile.TemporaryDirectory(prefix="dbp-extract-test-")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
@@ -393,12 +393,12 @@ class PilotExtractTests(unittest.TestCase):
                     changed.write(b"mutation")
             return content
 
-        with self.media.open("rb") as stream, patch("dbp_metrics.legacy.os.read", side_effect=mutate_read):
+        with self.media.open("rb") as stream, patch("dbmetrics.legacy.os.read", side_effect=mutate_read):
             with self.assertRaises(ValueError):
                 self.subject.hash_fd(stream.fileno(), time.monotonic() + 5, 1024)
 
     def test_requested_cut_failure_is_not_zero(self):
-        with patch("dbp_metrics.legacy.detect_cut_candidates", side_effect=ValueError("decode failed")):
+        with patch("dbmetrics.legacy.detect_cut_candidates", side_effect=ValueError("decode failed")):
             records, failed = self.subject.extract_clip(self.clip(), self.media_root, "original",
                 self.probe, time.monotonic() + 5, 1024, True, 27.0)
         self.assertTrue(failed)
@@ -460,7 +460,7 @@ class PilotExtractTests(unittest.TestCase):
     def test_cut_candidate_is_unvalidated_and_retains_threshold(self):
         fixture = {"value": 2, "processing_status": "complete", "evidence": [{
             "candidate_only": True, "threshold": 27.0, "cut_frame_indices": [30, 60]}]}
-        with patch("dbp_metrics.legacy.detect_cut_candidates", return_value=fixture):
+        with patch("dbmetrics.legacy.detect_cut_candidates", return_value=fixture):
             records, failed = self.subject.extract_clip(self.clip(), self.media_root, "original",
                 self.probe, time.monotonic() + 5, 1024, True, 27.0)
         self.assertFalse(failed)
@@ -562,7 +562,7 @@ class PilotExtractTests(unittest.TestCase):
                 self.subject.parse_vlm_response(json.dumps(valid), timestamps)
 
     def test_cli_accepts_explicit_probe_override_and_refuses_force(self):
-        command = [sys.executable, "-B", "-m", "dbp_metrics.legacy", "--manifest", str(self.manifest),
+        command = [sys.executable, "-B", "-m", "dbmetrics.legacy", "--manifest", str(self.manifest),
                    "--media-root", str(self.media_root), "--media-kind", "original",
                    "--output", str(self.output), "--ffprobe", self.probe]
         result = subprocess.run(command, capture_output=True, timeout=10)

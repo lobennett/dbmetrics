@@ -10,8 +10,8 @@ import sys
 import tempfile
 import unittest
 
-from dbp_metrics import METRICS, measure_video
-from dbp_metrics._runtime import STAGE_FIELDS
+from dbmetrics import METRICS, measure_video
+from dbmetrics._runtime import STAGE_FIELDS
 
 
 def normalized(value):

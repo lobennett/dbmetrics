@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 
 
-from dbp_metrics.experimental.scene_continuity import Config, SCHEMA, canonical, make_policy, measure, media_identity
+from dbmetrics.experimental.scene_continuity import Config, SCHEMA, canonical, make_policy, measure, media_identity
 
 
 def load_work(options):

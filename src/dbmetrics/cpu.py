@@ -39,7 +39,7 @@ def measure_video(path: str | Path, *, clip_id: str | None = None,
     for source in sorted(Path(__file__).parent.glob('*.py')):
         code_hash.update(source.name.encode())
         code_hash.update(source.read_bytes())
-    provenance = {'package': 'dbp-metrics', 'version': '0.3.0',
+    provenance = {'package': 'dbmetrics', 'version': '0.3.0',
                   'code_sha256': code_hash.hexdigest(), 'accuracy_validated': False}
     for stage in stages:
         options = {'clip': {'clip_id': clip_id}, 'media_root': str(path.parent),

@@ -10,8 +10,8 @@ import sys
 import tempfile
 
 
-from dbp_metrics.experimental.half_similarity import Config as SimilarityConfig, VJEPABackend, measure as measure_similarity, media_hash, measure_scene_window
-from dbp_metrics.experimental.scene_continuity import Config as SceneConfig, measure as measure_scene
+from dbmetrics.experimental.half_similarity import Config as SimilarityConfig, VJEPABackend, measure as measure_similarity, media_hash, measure_scene_window
+from dbmetrics.experimental.scene_continuity import Config as SceneConfig, measure as measure_scene
 
 
 def complete(document, vjepa, scene_windows):

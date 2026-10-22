@@ -9,10 +9,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 
 class PackageTests(unittest.TestCase):
     def test_package_exists(self):
-        self.assertIsNotNone(importlib.util.find_spec('dbp_metrics'))
+        self.assertIsNotNone(importlib.util.find_spec('dbmetrics'))
 
     def test_inventory_and_validation(self):
-        from dbp_metrics import METRICS, measure_video
+        from dbmetrics import METRICS, measure_video
 
         self.assertEqual(len(METRICS), 16)
         for settings in ({'timeout': 0}, {'stages': ['unknown']}, {'cut_threshold': 2}):
@@ -20,7 +20,7 @@ class PackageTests(unittest.TestCase):
                 measure_video('missing.mp4', **settings)
 
     def test_missing_media_remains_unknown(self):
-        from dbp_metrics import measure_video
+        from dbmetrics import measure_video
 
         records = measure_video('missing.mp4', stages=['probe'])
         self.assertEqual(len(records), 5)
@@ -28,7 +28,7 @@ class PackageTests(unittest.TestCase):
         self.assertTrue(all(record['processing_status'] == 'missing' for record in records))
 
     def test_media_symlinks_are_rejected(self):
-        from dbp_metrics import measure_video
+        from dbmetrics import measure_video
 
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

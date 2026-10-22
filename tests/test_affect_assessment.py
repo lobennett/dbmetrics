@@ -7,7 +7,7 @@ import sys
 import tempfile
 import unittest
 
-import dbp_metrics.experimental.affect as affect
+import dbmetrics.experimental.affect as affect
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -192,7 +192,7 @@ class EvaluationTests(unittest.TestCase):
 
 class CLITests(unittest.TestCase):
     def cli(self, *arguments):
-        return subprocess.run([sys.executable, "-m", "dbp_metrics.cli.affect", *arguments],
+        return subprocess.run([sys.executable, "-m", "dbmetrics.cli.affect", *arguments],
                               cwd=tempfile.gettempdir(), text=True, capture_output=True, check=False)
 
     def test_templates_and_prompt_export_no_inference(self):

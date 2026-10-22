@@ -18,13 +18,13 @@ uv run jupyter lab
 
 In VS Code, select `notebooks/.venv/bin/python`. Run cells individually: API creation and trial tracking change account data; previews do not. A running website and your account are required for the API notebook.
 
-The website notebook uses bundled `data/nsd_subj01.mp4`; text labels are demonstrations, not inference. The exploratory notebook uses a local gardening clip if available; otherwise supply your own video. Helpers live in `src/dbp_metrics/experimental/`. Keep generated data and private reviews out of Git.
+The website notebook uses bundled `data/nsd_subj01.mp4`; text labels are demonstrations, not inference. The exploratory notebook uses a local gardening clip if available; otherwise supply your own video. Helpers live in `src/dbmetrics/experimental/`. Keep generated data and private reviews out of Git.
 
 ## Optional V-JEPA
 
 ```sh
 uv sync --group vjepa
-uv run --group vjepa python -c 'from huggingface_hub import snapshot_download; from dbp_metrics.experimental.half_similarity import MODEL_ID, MODEL_REVISION; snapshot_download(MODEL_ID, revision=MODEL_REVISION, allow_patterns=["*.json", "*.safetensors"])'
+uv run --group vjepa python -c 'from huggingface_hub import snapshot_download; from dbmetrics.experimental.half_similarity import MODEL_ID, MODEL_REVISION; snapshot_download(MODEL_ID, revision=MODEL_REVISION, allow_patterns=["*.json", "*.safetensors"])'
 ```
 
 The explicit weight download is large. Restart the kernel, then set `RUN_VJEPA = True`. Other model runs also require cached weights and explicit opt-in. Exploratory results are not validated website metrics.

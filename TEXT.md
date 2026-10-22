@@ -15,7 +15,7 @@ GPU Paddle requires its corresponding platform-specific build; these CPU version
 do not establish GPU compatibility. FFmpeg must support `-vsync 0`.
 
 ```sh
-python -m dbp_metrics.cli.ocr --media example.mp4 --clip-id example \
+python -m dbmetrics.cli.ocr --media example.mp4 --clip-id example \
   --output-dir reports --model-dir /path/to/checkpoint \
   --model-source approved-source --model-revision approved-revision
 ```
@@ -30,9 +30,9 @@ The reviewed 8B model revision is `0c351dd01ed87e9c1b53cbc748cba10e6187ff3b`.
 
 ```python
 import time
-from dbp_metrics.evidence import EvidenceVideo
-from dbp_metrics.overlay import OverlayRuntime, extract_evidence_frames, prepare_views
-from dbp_metrics.captions import CaptionWatermarkRuntime
+from dbmetrics.evidence import EvidenceVideo
+from dbmetrics.overlay import OverlayRuntime, extract_evidence_frames, prepare_views
+from dbmetrics.captions import CaptionWatermarkRuntime
 
 video = EvidenceVideo("example.mp4", "reports/report.jsonl")
 deadline = time.monotonic() + 600

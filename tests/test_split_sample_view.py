@@ -7,7 +7,7 @@ class SplitSampleViewTests(unittest.TestCase):
     def test_view_uses_the_actual_sampling_evidence(self):
         if importlib.util.find_spec("PIL") is None:
             self.skipTest("Notebook Pillow dependency is not installed")
-        path = Path(__file__).parents[1] / "src/dbp_metrics/experimental/split_sample_view.py"
+        path = Path(__file__).parents[1] / "src/dbmetrics/experimental/split_sample_view.py"
         spec = importlib.util.spec_from_file_location("split_sample_view", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)

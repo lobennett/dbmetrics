@@ -32,7 +32,7 @@ def showinfo(pts, width=2, time_base="1/1000"):
 class PilotVisualTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics._visual")
+            self.subject = importlib.import_module("dbmetrics._visual")
         except ModuleNotFoundError:
             self.fail("pilot_visual implementation is not available")
 
@@ -380,7 +380,7 @@ class RealFFmpegVisualTests(unittest.TestCase):
         self.assertEqual(second["temporal_change_mean"]["value"], 0)
 
     def measure_fixture(self, levels, rate, **options):
-        subject = importlib.import_module("dbp_metrics._visual")
+        subject = importlib.import_module("dbmetrics._visual")
         video_delay = options.pop("video_delay", 0)
         with tempfile.TemporaryDirectory(prefix="dbp-visual-real-") as directory:
             media_path = Path(directory) / "fixture.mp4"

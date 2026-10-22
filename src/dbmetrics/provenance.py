@@ -13,13 +13,13 @@ def code_hashes():
 
 def verify_code(expected):
     if expected != code_hashes():
-        raise ValueError('dbp-metrics changed; start a new run with a new output directory')
+        raise ValueError('dbmetrics changed; start a new run with a new output directory')
 
 
 def verify_interpreter(python, expected):
     command = [str(python), '-I', '-B', '-c',
-               'import json; from dbp_metrics.provenance import code_hashes; '
+               'import json; from dbmetrics.provenance import code_hashes; '
                'print(json.dumps(code_hashes()))']
     result = subprocess.run(command, capture_output=True, timeout=30, check=True)
     if len(result.stdout) > 256 * 1024 or json.loads(result.stdout) != expected:
-        raise ValueError('Worker interpreter must use the same pinned dbp-metrics package')
+        raise ValueError('Worker interpreter must use the same pinned dbmetrics package')

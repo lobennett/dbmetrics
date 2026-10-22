@@ -10,7 +10,7 @@ from pathlib import Path
 import sys
 
 
-from dbp_metrics.experimental import affect
+from dbmetrics.experimental import affect
 
 
 def main(argv=None):
