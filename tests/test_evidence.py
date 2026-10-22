@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from dbp_metrics.evidence import ConflictError, EvidenceVideo
+from dbmetrics.evidence import ConflictError, EvidenceVideo
 
 
 class EvidenceTests(unittest.TestCase):

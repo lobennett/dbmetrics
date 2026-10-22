@@ -11,7 +11,7 @@ dependencies = [
     "nbconvert>=7.16",
     "numpy>=2,<3",
     "opencv-python-headless>=4.10,<5",
-    "dbp-metrics",
+    "dbmetrics",
     "dbp-api @ git+https://github.com/lobennett/dbp-api.git@d11933ff63553d314cff3bbebea0e0ae277c70c1",
 ]
 
@@ -19,7 +19,7 @@ dependencies = [
 package = false
 
 [tool.uv.sources]
-dbp-metrics = { path = "..", editable = true }
+dbmetrics = { path = "..", editable = true }
 
 [dependency-groups]
 vjepa = [

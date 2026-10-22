@@ -7,7 +7,7 @@ import json
 from string import Template
 
 from PIL import Image
-from dbp_metrics.experimental.half_similarity import cosine, histogram
+from dbmetrics.experimental.half_similarity import cosine, histogram
 
 
 def histogram_data(decoded, bins):

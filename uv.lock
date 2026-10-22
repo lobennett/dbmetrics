@@ -427,7 +427,7 @@ wheels = [
 ]
 
 [[package]]
-name = "dbp-metrics"
+name = "dbmetrics"
 version = "0.3.0"
 source = { editable = "." }
 

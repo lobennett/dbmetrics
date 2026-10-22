@@ -33,7 +33,7 @@ def synthetic_backend(magnitude=1.0):
 
 class TechnicalTests(unittest.TestCase):
     def setUp(self):
-        self.subject = importlib.import_module("dbp_metrics._technical")
+        self.subject = importlib.import_module("dbmetrics._technical")
 
     def measure(self, raw, pts=None, diagnostics=None, backend=None, **options):
         width = options.setdefault("width", 2)
@@ -183,7 +183,7 @@ class TechnicalTests(unittest.TestCase):
                 self.assertLess(time.monotonic() - started, 2)
 
     def test_startup_imports_no_optional_compute_dependencies(self):
-        code = "import dbp_metrics._technical, dbp_metrics; import sys; assert not {'cv2','numpy','torch'} & set(sys.modules)"
+        code = "import dbmetrics._technical, dbmetrics; import sys; assert not {'cv2','numpy','torch'} & set(sys.modules)"
         subprocess.run([sys.executable, "-B", "-c", code], check=True, capture_output=True, timeout=10)
 
 
@@ -191,7 +191,7 @@ class TechnicalTests(unittest.TestCase):
 class RealOpticalFlowTests(unittest.TestCase):
     def test_fixed_seed_translation_and_stationary_frames(self):
         import numpy
-        from dbp_metrics import _technical as pilot_technical
+        from dbmetrics import _technical as pilot_technical
 
         width = 64
         generator = numpy.random.default_rng(19)
@@ -209,7 +209,7 @@ class RealOpticalFlowTests(unittest.TestCase):
 @unittest.skipUnless(os.path.isfile(FFMPEG) and os.access(FFMPEG, os.X_OK), "optional real FFmpeg unavailable")
 class RealTechnicalFFmpegTests(unittest.TestCase):
     def test_cfr_and_vfr_preserve_actual_pts_without_fps_resampling(self):
-        from dbp_metrics import _technical as pilot_technical
+        from dbmetrics import _technical as pilot_technical
 
         with tempfile.TemporaryDirectory() as directory:
             for variable, expected in ((False, 0), (True, 1 / 3)):

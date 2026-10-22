@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 
 
-from dbp_metrics._ocr import Limits, MODEL, package_versions, resolve_ffmpeg, run_benchmark, validate_config
+from dbmetrics._ocr import Limits, MODEL, package_versions, resolve_ffmpeg, run_benchmark, validate_config
 
 
 def main(argv=None):

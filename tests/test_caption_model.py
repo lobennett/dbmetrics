@@ -14,9 +14,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 class CaptionModelTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics.captions")
+            self.subject = importlib.import_module("dbmetrics.captions")
         except ModuleNotFoundError:
-            self.fail("dbp_metrics.captions helper is not implemented")
+            self.fail("dbmetrics.captions helper is not implemented")
 
     def response(self, *kinds):
         return {"observations": [{"kind": kind, "images": [0], "text": ""} for kind in kinds]}
@@ -146,7 +146,7 @@ class CaptionModelTests(unittest.TestCase):
                 self.subject.classification_record(response)
 
     def test_initializer_reuses_pinned_eight_billion_model_only(self):
-        from dbp_metrics.overlay import OverlayRuntime
+        from dbmetrics.overlay import OverlayRuntime
 
         self.assertTrue(issubclass(self.subject.CaptionWatermarkRuntime, OverlayRuntime))
         with patch.object(OverlayRuntime, "__init__", return_value=None) as initialize:
@@ -176,7 +176,7 @@ class CaptionModelTests(unittest.TestCase):
         fake_torch = SimpleNamespace(inference_mode=nullcontext, cuda=SimpleNamespace(synchronize=Mock()))
         ticks = iter(range(30)) if clock is None else iter(clock)
         with patch.dict(sys.modules, {"torch": fake_torch}), \
-                patch("dbp_metrics._local_model.check_model_unchanged", side_effect=checker), \
+                patch("dbmetrics._local_model.check_model_unchanged", side_effect=checker), \
                 patch.object(self.subject.time, "monotonic", side_effect=lambda: next(ticks)):
             return runtime.infer_images(images, sampling, deadline)
 

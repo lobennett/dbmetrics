@@ -31,9 +31,9 @@ class FixtureDetector:
 class StudyTextTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics._ocr")
+            self.subject = importlib.import_module("dbmetrics._ocr")
         except ModuleNotFoundError:
-            self.fail("dbp_metrics._ocr benchmark implementation is missing")
+            self.fail("dbmetrics._ocr benchmark implementation is missing")
         self.temporary = tempfile.TemporaryDirectory()
         self.addCleanup(self.temporary.cleanup)
         self.directory = Path(self.temporary.name)
@@ -244,7 +244,7 @@ class StudyTextTests(unittest.TestCase):
         self.assertEqual(observed["device"], "cpu")
 
     def cli(self, *arguments, cwd=None):
-        return subprocess.run([sys.executable, "-B", "-m", "dbp_metrics.cli.ocr",
+        return subprocess.run([sys.executable, "-B", "-m", "dbmetrics.cli.ocr",
                                *map(str, arguments)], capture_output=True, text=True, timeout=15, cwd=cwd)
 
     def test_worker_overrides_inherited_dependency_caches_before_subprocess_imports(self):
@@ -290,7 +290,7 @@ class StudyTextTests(unittest.TestCase):
         source = (
             "import socket, sys\n"
             f"sys.path.insert(0, {str(ROOT / 'src')!r})\n"
-            "from dbp_metrics._ocr import offline_audit\n"
+            "from dbmetrics._ocr import offline_audit\n"
             "sys.addaudithook(offline_audit)\n"
             "def safety_hook(event, arguments):\n"
             "    if event.startswith('socket.') and event != 'socket.__new__':\n"
@@ -496,7 +496,7 @@ class StudyTextTests(unittest.TestCase):
 
     def test_import_is_standard_library_only(self):
         command = [sys.executable, "-I", "-S", "-B", "-c",
-                   f"import sys; sys.path.insert(0, {str(ROOT / 'src')!r}); import dbp_metrics._ocr; "
+                   f"import sys; sys.path.insert(0, {str(ROOT / 'src')!r}); import dbmetrics._ocr; "
                    "assert not {'paddle', 'paddleocr', 'numpy'} & sys.modules.keys()"]
         subprocess.run(command, check=True, capture_output=True, timeout=5)
 

@@ -1,6 +1,6 @@
 import unittest
 import sys
-from dbp_metrics.provenance import code_hashes, verify_code, verify_interpreter
+from dbmetrics.provenance import code_hashes, verify_code, verify_interpreter
 
 
 class ProvenanceTests(unittest.TestCase):

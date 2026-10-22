@@ -7,7 +7,7 @@ import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from dbp_metrics._runtime import extract_clip, strict_json
+from dbmetrics._runtime import extract_clip, strict_json
 
 if __name__ == '__main__':
     options = strict_json(sys.argv[1])

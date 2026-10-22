@@ -2,14 +2,14 @@
 
 | Component | Owner |
 | --- | --- |
-| Probe, sampled RGB/audio, optical flow, FFmpeg cut candidates | `dbp-metrics` |
-| Legacy manifest extractor, PySceneDetect adapter and sparse semantic VLM | `dbp-metrics.legacy`, `_vlm`, `_semantics` |
-| Dense Paddle OCR and OCR-guided image selection | `dbp-metrics._ocr`, `overlay` |
-| Compact caption/overlay classification and cached model validation | `dbp-metrics.captions`, `_local_model` |
-| Worker supervision, deadlines and checkpoint protocol | `dbp-metrics.batch` |
-| Classification confusion counts and exclusions | `dbp-metrics.evaluation` |
-| Half-video similarity, continuity and affect CSV helpers | `dbp-metrics.experimental` |
-| Offline research-sidecar CLI | `dbp-metrics.cli.research` |
+| Probe, sampled RGB/audio, optical flow, FFmpeg cut candidates | `dbmetrics` |
+| Legacy manifest extractor, PySceneDetect adapter and sparse semantic VLM | `dbmetrics.legacy`, `_vlm`, `_semantics` |
+| Dense Paddle OCR and OCR-guided image selection | `dbmetrics._ocr`, `overlay` |
+| Compact caption/overlay classification and cached model validation | `dbmetrics.captions`, `_local_model` |
+| Worker supervision, deadlines and checkpoint protocol | `dbmetrics.batch` |
+| Classification confusion counts and exclusions | `dbmetrics.evaluation` |
+| Half-video similarity, continuity and affect CSV helpers | `dbmetrics.experimental` |
+| Offline research-sidecar CLI | `dbmetrics.cli.research` |
 | Catalog selection, staging and metadata import/indexing | Website adapters |
 | Review exports, fixed-cohort evaluation bindings and review UI | Review/application adapters |
 | Media serving, authentication and study/trial tracking | Website |

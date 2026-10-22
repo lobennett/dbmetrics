@@ -9,7 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import MagicMock, patch
 
-import dbp_metrics.experimental.half_similarity as subject
+import dbmetrics.experimental.half_similarity as subject
 
 
 class FakeBackend:
@@ -118,7 +118,7 @@ class HalfSimilarityTests(unittest.TestCase):
         manifest = self.media.with_suffix(".jsonl")
         output = self.media.with_suffix(".results.jsonl")
         manifest.write_text(json.dumps({"id": "clip", "path": self.media.name}) + "\n")
-        command = [sys.executable, "-m", "dbp_metrics.cli.half_similarity",
+        command = [sys.executable, "-m", "dbmetrics.cli.half_similarity",
                    "--manifest", str(manifest), "--output", str(output), "--frames-per-half", "4"]
         subprocess.run(command, check=True, capture_output=True)
         initial = output.read_bytes()
@@ -156,7 +156,7 @@ class HalfSimilarityTests(unittest.TestCase):
         manifest = self.media.with_suffix(".jsonl")
         output = self.media.with_suffix(".results.jsonl")
         manifest.write_text(json.dumps({"id": "bad", "path": self.media.name}) + "\n")
-        command = [sys.executable, "-m", "dbp_metrics.cli.half_similarity",
+        command = [sys.executable, "-m", "dbmetrics.cli.half_similarity",
                    "--manifest", str(manifest), "--output", str(output)]
         self.assertEqual(subprocess.run(command, capture_output=True).returncode, 1)
         self.assertEqual(subprocess.run(command + ["--resume"], capture_output=True).returncode, 1)

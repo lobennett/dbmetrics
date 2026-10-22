@@ -37,7 +37,7 @@ def metadata(scores, pts=None, times=None):
 class PilotCutsTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics._cuts")
+            self.subject = importlib.import_module("dbmetrics._cuts")
         except ModuleNotFoundError:
             self.fail("pilot_cuts implementation is not available")
 
@@ -308,7 +308,7 @@ class PilotCutsTests(unittest.TestCase):
                             probe_raw=probe("2050", duration="205")))
 
     def test_default_runner_enforces_deadline_and_output_limit(self):
-        from dbp_metrics._runtime import run_bounded
+        from dbmetrics._runtime import run_bounded
 
         for script, timeout in (("import time; time.sleep(5)", 0.1),
                                 ("import sys; sys.stderr.write('x'*100000)", 2)):
@@ -323,7 +323,7 @@ class PilotCutsTests(unittest.TestCase):
 
     def test_import_does_not_load_application_or_ml(self):
         completed = subprocess.run([sys.executable, "-c",
-            "import sys; import dbp_metrics._cuts; "
+            "import sys; import dbmetrics._cuts; "
             "assert not {'app','torch','transformers','scenedetect','cv2','pilot_extract'} & set(sys.modules)"],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)
         self.assertEqual(completed.returncode, 0, completed.stderr)
@@ -333,7 +333,7 @@ class PilotCutsTests(unittest.TestCase):
                      "optional real FFmpeg unavailable; set DBP_TEST_FFMPEG")
 class RealFFmpegCutsTests(unittest.TestCase):
     def detect_fixture(self, levels, indexed_frames=None, video_delay=0, **options):
-        subject = importlib.import_module("dbp_metrics._cuts")
+        subject = importlib.import_module("dbmetrics._cuts")
         with tempfile.TemporaryDirectory(prefix="dbp-cuts-real-") as directory:
             media_path = Path(directory) / "fixture.mp4"
             subprocess.run([FFMPEG, "-hide_banner", "-loglevel", "error", "-nostdin",

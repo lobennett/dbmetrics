@@ -19,9 +19,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 class OverlayModelTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics.overlay")
+            self.subject = importlib.import_module("dbmetrics.overlay")
         except ModuleNotFoundError:
-            self.fail("dbp_metrics.overlay is not implemented")
+            self.fail("dbmetrics.overlay is not implemented")
 
     def evidence(self, count=100):
         return {"frames": [{"index": index, "time_seconds": index / 10,
@@ -306,7 +306,7 @@ class OverlayModelTests(unittest.TestCase):
             response["added_logo"].update(value="present", evidence_frame_indices=[count - 1])
             runtime, pilot, decoded, sampling = self.inference_fixture(policy, raw=json.dumps(response))
             with mock.patch.dict(sys.modules, {"torch": SimpleNamespace(inference_mode=nullcontext)}), \
-                    mock.patch("dbp_metrics._local_model.check_model_unchanged"), \
+                    mock.patch("dbmetrics._local_model.check_model_unchanged"), \
                     mock.patch.object(self.subject, "extract_evidence_frames", return_value=(decoded, sampling)), \
                     mock.patch.object(self.subject.time, "monotonic", return_value=1):
                 record = runtime.infer(pilot, "synthetic-development", "unused", 10)
@@ -337,7 +337,7 @@ class OverlayModelTests(unittest.TestCase):
         for input_tokens, output_tokens in ((4096, 2), (4097, 2), (100, 650)):
             runtime, pilot, decoded, sampling = self.inference_fixture("global-and-corners", input_tokens, output_tokens)
             with mock.patch.dict(sys.modules, {"torch": SimpleNamespace(inference_mode=nullcontext)}), \
-                    mock.patch("dbp_metrics._local_model.check_model_unchanged"), \
+                    mock.patch("dbmetrics._local_model.check_model_unchanged"), \
                     mock.patch.object(self.subject, "extract_evidence_frames", return_value=(decoded, sampling)), \
                     mock.patch.object(self.subject.time, "monotonic", return_value=1):
                 if input_tokens > 4096:

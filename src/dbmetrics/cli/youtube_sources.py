@@ -9,7 +9,7 @@ import math
 from pathlib import Path
 import time
 
-from dbp_metrics.source_statistics import METRICS, catalog_record, read_catalog, youtube_record
+from dbmetrics.source_statistics import METRICS, catalog_record, read_catalog, youtube_record
 
 
 def fetch_youtube(source_id):

@@ -1,4 +1,4 @@
-# dbp-metrics
+# dbmetrics
 
 Offline video measurements, separate from the DBP website.
 Existing CPU, OCR and Qwen computations are preserved; exploratory methods are separate.
@@ -10,7 +10,7 @@ newer versions can change frame timing and diagnostics, not just CLI flags. Then
 
 ```sh
 uv sync --extra technical
-uv run python -c "from dbp_metrics import measure_video; print(measure_video('example.mp4'))"
+uv run python -c "from dbmetrics import measure_video; print(measure_video('example.mp4'))"
 DBP_TEST_FFMPEG=/path/to/compatible/ffmpeg uv run python -m unittest discover -s tests -v
 ```
 
@@ -38,13 +38,13 @@ See `VALIDATION.md` for evaluation requirements.
 
 ## Text and logos
 
-`dbp_metrics.ocr` detects text regions using a supplied local Paddle checkpoint.
-`dbp_metrics.evidence.EvidenceVideo` verifies an OCR report against its video.
-`dbp_metrics.overlay.OverlayRuntime` uses OCR-guided images and the pinned Qwen model.
-`dbp_metrics.captions.CaptionWatermarkRuntime.infer_images` uses the compact observation prompt.
+`dbmetrics.ocr` detects text regions using a supplied local Paddle checkpoint.
+`dbmetrics.evidence.EvidenceVideo` verifies an OCR report against its video.
+`dbmetrics.overlay.OverlayRuntime` uses OCR-guided images and the pinned Qwen model.
+`dbmetrics.captions.CaptionWatermarkRuntime.infer_images` uses the compact observation prompt.
 See `TEXT.md` for dependencies and usage. Neither runtime downloads weights.
 
-`dbp_metrics.experimental` contains half-video similarity, continuity diagnostics
+`dbmetrics.experimental` contains half-video similarity, continuity diagnostics
 and affect-rating CSV helpers. These are not automatically included in CPU results.
 Website, review UI and cluster scheduling code remain outside this package.
 
@@ -63,7 +63,7 @@ Export a fixed selection from the catalog into a manifest:
 Run the package's existing batch interface on that selection:
 
 ```sh
-uv run python -m dbp_metrics.legacy \
+uv run python -m dbmetrics.legacy \
   --manifest /data/manifest.json --media-root /data/videos \
   --media-kind rendition --stage probe \
   --output /data/results/probe.json --run-id probe-v1
@@ -87,13 +87,13 @@ need their separately configured local checkpoints; they are not implicit CPU st
 
 ## Source statistics
 
-`dbp_metrics.source_statistics` defines source views, likes and comments. These
+`dbmetrics.source_statistics` defines source views, likes and comments. These
 belong to the original YouTube video, not individual clips; join by `source_id`.
 Missing counts stay null. Archived views have an unknown collection date.
 
 ```sh
 uv sync --extra youtube
-uv run python -m dbp_metrics.cli.youtube_sources --catalog /path/to/catalog.sqlite3 --output /path/to/source-statistics.jsonl --provider youtube --limit 10
+uv run python -m dbmetrics.cli.youtube_sources --catalog /path/to/catalog.sqlite3 --output /path/to/source-statistics.jsonl --provider youtube --limit 10
 ```
 
 The metadata-only Python API downloads no media and requires no API key. Results

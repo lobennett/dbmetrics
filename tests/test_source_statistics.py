@@ -7,8 +7,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from dbp_metrics import source_statistics
-from dbp_metrics.cli import youtube_sources
+from dbmetrics import source_statistics
+from dbmetrics.cli import youtube_sources
 
 
 SOURCE_ID = "--42OoF8WJM"

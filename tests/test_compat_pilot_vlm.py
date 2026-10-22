@@ -14,7 +14,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
 
-import dbp_metrics.legacy
+import dbmetrics.legacy
 
 
 REVISION = "a" * 40
@@ -55,9 +55,9 @@ class FakeBatch(dict):
 class PilotVLMTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics._vlm")
+            self.subject = importlib.import_module("dbmetrics._vlm")
         except ModuleNotFoundError:
-            self.fail("bounded dbp_metrics._vlm adapter is not implemented")
+            self.fail("bounded dbmetrics._vlm adapter is not implemented")
         temporary = tempfile.TemporaryDirectory(prefix="dbp-vlm-software-test-")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name).resolve()
@@ -154,8 +154,8 @@ class PilotVLMTests(unittest.TestCase):
     def test_runtime_reuses_verified_weights_but_checks_mutation_and_identity(self):
         modules, model, processor, batch = self.runtime()
         runtime = self.subject.VLMRuntime()
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()), \
-                patch("dbp_metrics._vlm.validate_local_model", wraps=self.subject.validate_local_model) as validate:
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()), \
+                patch("dbmetrics._vlm.validate_local_model", wraps=self.subject.validate_local_model) as validate:
             self.infer(runtime=runtime)
             self.infer(runtime=runtime)
             self.assertEqual(validate.call_count, 1)
@@ -170,7 +170,7 @@ class PilotVLMTests(unittest.TestCase):
 
     def test_insufficient_distinct_frames_abstains_without_generation(self):
         modules, model, processor, batch = self.runtime()
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.decode_frames", side_effect=self.subject.InsufficientFrames("too few distinct frames")):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.decode_frames", side_effect=self.subject.InsufficientFrames("too few distinct frames")):
             measured = self.infer()
         self.assertTrue(all(record["value"] is None for record in measured.values()))
         self.assertTrue(all(record["processing_status"] == "missing" for record in measured.values()))
@@ -180,12 +180,12 @@ class PilotVLMTests(unittest.TestCase):
     def test_prompt_response_example_obeys_evidence_parser(self):
         self.assertIn("{", self.subject.PROMPT, "The model needs an explicit nested JSON response example")
         example, _ = json.JSONDecoder().raw_decode(self.subject.PROMPT[self.subject.PROMPT.index("{"):])
-        parsed = dbp_metrics.legacy.parse_vlm_response(json.dumps(example), [0.5, 1.5])["fields"]
-        self.assertEqual(set(parsed), set(dbp_metrics.legacy.SEMANTIC_FIELDS))
-        self.assertEqual(set(example), set(dbp_metrics.legacy.SEMANTIC_FIELDS))
+        parsed = dbmetrics.legacy.parse_vlm_response(json.dumps(example), [0.5, 1.5])["fields"]
+        self.assertEqual(set(parsed), set(dbmetrics.legacy.SEMANTIC_FIELDS))
+        self.assertEqual(set(example), set(dbmetrics.legacy.SEMANTIC_FIELDS))
         self.assertTrue(all(field["value"] is None for field in parsed.values()))
         example["hands_visible"] = {"value": True, "evidence_frame_indices": [1]}
-        hands = dbp_metrics.legacy.parse_vlm_response(json.dumps(example), [0.5, 1.5])["fields"]["hands_visible"]
+        hands = dbmetrics.legacy.parse_vlm_response(json.dumps(example), [0.5, 1.5])["fields"]["hands_visible"]
         self.assertTrue(hands["value"])
         self.assertEqual(hands["evidence"][0]["observed_frame_timestamps_seconds"], [1.5])
 
@@ -315,7 +315,7 @@ class PilotVLMTests(unittest.TestCase):
         for missing in ("Qwen3VLProcessor", "Qwen3VLForConditionalGeneration"):
             modules, model, processor, batch = self.runtime()
             delattr(modules["transformers"], missing)
-            with self.subTest(missing=missing), patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded") as decoder:
+            with self.subTest(missing=missing), patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded") as decoder:
                 with self.assertRaisesRegex(ValueError, "Qwen3"):
                     self.infer(**options)
             decoder.assert_not_called()
@@ -326,7 +326,7 @@ class PilotVLMTests(unittest.TestCase):
     def test_qwen3_dispatch_is_local_bounded_and_reports_observed_evidence(self):
         options = self.qwen3_fixture()
         modules, model, processor, batch = self.runtime()
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output((0.53, 1.57))):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output((0.53, 1.57))):
             measured = self.infer(**options)
         transformers = modules["transformers"]
         transformers.Qwen2_5_VLProcessor.from_pretrained.assert_not_called()
@@ -369,7 +369,7 @@ class PilotVLMTests(unittest.TestCase):
         for response in ("not JSON", flat_response,
                          json.dumps({"human_present": {"value": True, "evidence_frame_indices": [2]}})):
             modules, model, processor, batch = self.runtime(response=response)
-            with self.subTest(response=response), patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()):
+            with self.subTest(response=response), patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()):
                 measured = self.infer(**options)
             for measurement in measured.values():
                 self.assertIsNone(measurement["value"])
@@ -387,7 +387,7 @@ class PilotVLMTests(unittest.TestCase):
             return True
 
         cuda.is_bf16_supported.side_effect = supported
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()):
             measured = self.infer(**options)
         cuda.is_bf16_supported.assert_called_once_with(including_emulation=False)
         loader = modules["transformers"].Qwen3VLForConditionalGeneration.from_pretrained
@@ -405,7 +405,7 @@ class PilotVLMTests(unittest.TestCase):
                 cuda.is_bf16_supported.side_effect = support
             else:
                 cuda.is_bf16_supported.return_value = support
-            with self.subTest(support=support), patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()) as decoder:
+            with self.subTest(support=support), patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()) as decoder:
                 with self.assertRaisesRegex(ValueError, "bfloat16.*cuda:1"):
                     self.infer(**options)
                 decoder.assert_not_called()
@@ -416,7 +416,7 @@ class PilotVLMTests(unittest.TestCase):
     def test_qwen25_retains_float16_without_requiring_bfloat16_support(self):
         modules, model, processor, batch = self.runtime()
         modules["torch"].cuda.is_bf16_supported.side_effect = AssertionError("Qwen2.5 must not require BF16")
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()):
             measured = self.infer()
         loader = modules["transformers"].Qwen2_5_VLForConditionalGeneration.from_pretrained
         self.assertEqual(loader.call_args.kwargs["dtype"], "fixture-float16")
@@ -431,18 +431,18 @@ class PilotVLMTests(unittest.TestCase):
             model.generate.assert_not_called()
         for prompt_length, generated_length in ((4097, 2), (3, 1025)):
             modules, model, processor, batch = self.runtime(prompt_length=prompt_length, generated_length=generated_length)
-            with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
+            with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
                 self.infer(**options)
         modules, model, processor, batch = self.runtime()
         modules["torchvision"] = SimpleNamespace(__version__="0.23.0")
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded") as decoder, self.assertRaisesRegex(ValueError, "torchvision"):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded") as decoder, self.assertRaisesRegex(ValueError, "torchvision"):
             self.infer(**options)
         decoder.assert_not_called()
         transformers = modules["transformers"]
         transformers.Qwen3VLForConditionalGeneration.from_pretrained.assert_not_called()
         modules, model, processor, batch = self.runtime()
         model.generate.side_effect = lambda **kwargs: self.json_file("config.json", QWEN3_CONFIG | {"changed": True}) or [[7, 7, 7, 9, 9]]
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
             self.infer(**options)
 
     def test_config_architecture_remote_code_quantization_and_large_models_are_rejected(self):
@@ -541,13 +541,13 @@ class PilotVLMTests(unittest.TestCase):
                 self.subject.decode_frames(media.fileno(), 2.0, 2, str(binary), time.monotonic() + seconds)
 
     def test_legacy_contract_documents_the_executable_adapter_bounds(self):
-        contract = dbp_metrics.legacy.vlm_adapter_contract(self.model_dir, REVISION)
+        contract = dbmetrics.legacy.vlm_adapter_contract(self.model_dir, REVISION)
         self.assertEqual(contract["sampling"]["max_frames"], 8)
         self.assertEqual(contract["sampling"]["max_frame_side_px"], 448)
 
     def test_inference_is_local_pinned_single_device_and_token_bounded(self):
         modules, model, processor, batch = self.runtime()
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()), patch.dict(os.environ, {}, clear=False):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()), patch.dict(os.environ, {}, clear=False):
             results = self.infer()
             self.assertEqual(os.environ["HF_HUB_OFFLINE"], "1")
             self.assertEqual(os.environ["TRANSFORMERS_OFFLINE"], "1")
@@ -580,7 +580,7 @@ class PilotVLMTests(unittest.TestCase):
 
     def test_bad_response_is_error_with_private_raw_response_not_a_negative(self):
         modules, model, processor, batch = self.runtime(response="not JSON")
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()):
             results = self.infer()
         self.assertEqual(results["human_present"]["evidence"][0]["run_provenance"]["raw_response"], "not JSON")
         for value in results.values():
@@ -593,11 +593,11 @@ class PilotVLMTests(unittest.TestCase):
 
         response = json.dumps({field: {"value": False if field == "hands_visible" else None,
                                       "evidence_frame_indices": [0] if field == "hands_visible" else []}
-                               for field in dbp_metrics.legacy.SEMANTIC_FIELDS[:3]})
+                               for field in dbmetrics.legacy.SEMANTIC_FIELDS[:3]})
         modules, model, processor, batch = self.runtime(response=response)
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()):
             measured = self.infer()
-        for field in dbp_metrics.legacy.SEMANTIC_FIELDS[:3]:
+        for field in dbmetrics.legacy.SEMANTIC_FIELDS[:3]:
             self.assertEqual(measured[field]["processing_status"], "complete")
             self.assertIsNone(measured[field]["value"])
         self.assertEqual(measured["visible_text_present"]["processing_status"], "missing")
@@ -606,13 +606,13 @@ class PilotVLMTests(unittest.TestCase):
         fixture.setUp()
         records = []
         for clip in fixture.manifest["clips"]:
-            for record in dbp_metrics.legacy.empty_records(clip["clip_id"], "/fixture/clip.mp4", "original"):
+            for record in dbmetrics.legacy.empty_records(clip["clip_id"], "/fixture/clip.mp4", "original"):
                 if record["field_id"] in measured:
                     record.update(measured[record["field_id"]])
                     record["media_sha256"] = hashlib.sha256(self.media.read_bytes()).hexdigest()
                     records.append(record)
         snapshot = fixture.build(measurement_paths=[fixture.measurements(records)], semantic_method="video_vlm")
-        for field in dbp_metrics.legacy.SEMANTIC_FIELDS[:3]:
+        for field in dbmetrics.legacy.SEMANTIC_FIELDS[:3]:
             self.assertEqual(sum(clip["annotations"][field]["processing_status"] == "complete" for clip in snapshot["clips"]), 23)
             self.assertTrue(all(clip["annotations"][field]["value"] is None for clip in snapshot["clips"]))
 
@@ -620,7 +620,7 @@ class PilotVLMTests(unittest.TestCase):
         for vision in (None, SimpleNamespace(__version__="0.23.0")):
             modules, model, processor, batch = self.runtime()
             modules["torchvision"] = vision
-            with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded") as decoder:
+            with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded") as decoder:
                 with self.assertRaisesRegex(ValueError, "torchvision"):
                     self.infer()
             decoder.assert_not_called()
@@ -640,8 +640,8 @@ class PilotVLMTests(unittest.TestCase):
         options = {"local_model_dir": str(self.model_dir), "revision": REVISION, "device": "cuda:1",
                    "ffmpeg": "fixture-ffmpeg", "frame_count": 2}
         modules, model, processor, batch = self.runtime()
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()):
-            records, failed = dbp_metrics.legacy.extract_clip({"clip_id": "fixture_part_00000001"}, self.root, "original",
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()):
+            records, failed = dbmetrics.legacy.extract_clip({"clip_id": "fixture_part_00000001"}, self.root, "original",
                 str(probe), time.monotonic() + 10, 1024, False, 27.0, vlm_options=options)
         fields = {record["field_id"]: record for record in records}
         self.assertFalse(failed)
@@ -660,7 +660,7 @@ class PilotVLMTests(unittest.TestCase):
         payload = {"schema_version": "dbt1-pilot-measurements-v1", "manifest_sha256": "a" * 64,
                    "run_id": "software-fixture", "records": records}
         measured = pilot_build.validate_measurements(payload, "c" * 64, "a" * 64, {clip["clip_id"]: clip})
-        self.assertEqual({field for clip_id, field, method in measured}, set(dbp_metrics.legacy.ALL_FIELDS))
+        self.assertEqual({field for clip_id, field, method in measured}, set(dbmetrics.legacy.ALL_FIELDS))
         for field in pilot.TECHNICAL_FIELDS:
             self.assertEqual(snapshot["clips"][0]["annotations"][field], pilot.unknown_annotation())
 
@@ -668,7 +668,7 @@ class PilotVLMTests(unittest.TestCase):
         response = json.loads(RESPONSE)
         response["human_present"]["evidence_frame_indices"] = [1, 0]
         modules, model, processor, batch = self.runtime(response=json.dumps(response))
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()):
             measured = self.infer()
         evidence = measured["human_present"]["evidence"][0]
         self.assertEqual(evidence["evidence_frame_indices"], [0, 1])
@@ -681,14 +681,14 @@ class PilotVLMTests(unittest.TestCase):
         manifest.write_text(json.dumps({"schema_version": "dbt1-evidence-manifest-v1", "clips": [
             {"clip_id": "fixture_part_00000001", "source_id": "fixture", "part": 1}]}))
         output = self.root / "output.json"
-        records = dbp_metrics.legacy.empty_records("fixture_part_00000001", media_root / "fixture_part_00000001.mp4", "original")
+        records = dbmetrics.legacy.empty_records("fixture_part_00000001", media_root / "fixture_part_00000001.mp4", "original")
 
         def worker(command, deadline, limit, **options):
             self.assertTrue(options.get("capture_stderr"))
             return json.dumps({"records": records, "failed": False}).encode(), b"bounded loader progress"
 
-        with patch("dbp_metrics.legacy.run_bounded", side_effect=worker):
-            status = dbp_metrics.legacy.extract_pilot(manifest, media_root, output, "original", vlm=True,
+        with patch("dbmetrics.legacy.run_bounded", side_effect=worker):
+            status = dbmetrics.legacy.extract_pilot(manifest, media_root, output, "original", vlm=True,
                 local_vlm_dir=self.model_dir, model_revision=REVISION, device="cuda:1")
         self.assertEqual(status, 0)
         fields = {record["field_id"]: record for record in json.loads(output.read_text())["records"]}
@@ -709,11 +709,11 @@ class PilotVLMTests(unittest.TestCase):
                          "avg_frame_rate": "30/1"}]})) + ")\n")
         probe.chmod(0o700)
         output = self.root / "output.json"
-        status = dbp_metrics.legacy.extract_pilot(manifest, media_root, output, "original", ffprobe=str(probe), vlm=True,
+        status = dbmetrics.legacy.extract_pilot(manifest, media_root, output, "original", ffprobe=str(probe), vlm=True,
             local_vlm_dir=self.model_dir, model_revision=REVISION, device="cuda:0")
         self.assertEqual(status, 1)
         fields = {record["field_id"]: record for record in json.loads(output.read_text())["records"]}
-        self.assertEqual(set(fields), set(dbp_metrics.legacy.SEMANTIC_FIELDS))
+        self.assertEqual(set(fields), set(dbmetrics.legacy.SEMANTIC_FIELDS))
         self.assertEqual(fields["human_present"]["processing_status"], "error")
         self.assertIn("identity", fields["human_present"]["evidence"][0]["reason"])
 
@@ -725,7 +725,7 @@ class PilotVLMTests(unittest.TestCase):
             model.generate.assert_not_called()
         for prompt_length, generated_length in ((4097, 2), (3, 1025)):
             modules, model, processor, batch = self.runtime(prompt_length=prompt_length, generated_length=generated_length)
-            with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
+            with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
                 self.infer()
         modules, model, processor, batch = self.runtime()
         modules["transformers"].__version__ = "5.0.0"
@@ -735,7 +735,7 @@ class PilotVLMTests(unittest.TestCase):
     def test_model_change_while_loading_is_rejected(self):
         modules, model, processor, batch = self.runtime()
         model.generate.side_effect = lambda **kwargs: self.json_file("config.json", CONFIG | {"changed": True}) or [[7, 7, 7, 9, 9]]
-        with patch.dict(sys.modules, modules), patch("dbp_metrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
+        with patch.dict(sys.modules, modules), patch("dbmetrics._vlm.run_bounded", return_value=self.decoder_output()), self.assertRaises(ValueError):
             self.infer()
 
     def test_cli_requires_all_vlm_flags_and_cannot_write_raw_responses_into_git(self):
@@ -743,7 +743,7 @@ class PilotVLMTests(unittest.TestCase):
         manifest.write_text(json.dumps({"schema_version": "dbt1-evidence-manifest-v1", "clips": [
             {"clip_id": "fixture_part_00000001", "source_id": "fixture", "part": 1}]}))
         output = self.root / "output.json"
-        command = [sys.executable, "-B", "-m", "dbp_metrics.legacy", "--manifest", str(manifest),
+        command = [sys.executable, "-B", "-m", "dbmetrics.legacy", "--manifest", str(manifest),
                    "--media-root", str(self.root), "--media-kind", "original", "--output", str(output)]
         for flags in (["--vlm"], ["--local-vlm-dir", str(self.model_dir)],
                       ["--vlm", "--local-vlm-dir", str(self.model_dir), "--model-revision", REVISION]):
@@ -752,15 +752,15 @@ class PilotVLMTests(unittest.TestCase):
             self.assertFalse(output.exists())
         repository = Path(__file__).resolve().parents[1]
         with self.assertRaises(ValueError):
-            dbp_metrics.legacy.extract_pilot(manifest, self.root, repository / "forbidden-vlm-output.json", "original",
+            dbmetrics.legacy.extract_pilot(manifest, self.root, repository / "forbidden-vlm-output.json", "original",
                 vlm=True, local_vlm_dir=self.model_dir, model_revision=REVISION, device="cuda:0")
 
     def test_module_and_cli_help_do_not_import_ml_packages(self):
-        command = [sys.executable, "-B", "-c", "import sys, dbp_metrics._vlm, dbp_metrics.legacy; "
+        command = [sys.executable, "-B", "-c", "import sys, dbmetrics._vlm, dbmetrics.legacy; "
                    "assert not {'torch', 'transformers', 'PIL'} & set(sys.modules)"]
         result = subprocess.run(command, capture_output=True, timeout=5)
         self.assertEqual(result.returncode, 0, result.stderr)
-        result = subprocess.run([sys.executable, "-B", "-m", "dbp_metrics.legacy", "--help"],
+        result = subprocess.run([sys.executable, "-B", "-m", "dbmetrics.legacy", "--help"],
                                 capture_output=True, timeout=5)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(b"--local-vlm-dir", result.stdout)

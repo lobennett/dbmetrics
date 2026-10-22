@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from dbp_metrics.experimental.candidate_metrics import transition_candidates, window_scores, validate_hypothesis, compare_boundaries
+from dbmetrics.experimental.candidate_metrics import transition_candidates, window_scores, validate_hypothesis, compare_boundaries
 
 
 class CandidateMetricsTests(unittest.TestCase):

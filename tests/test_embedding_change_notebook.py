@@ -5,7 +5,7 @@ import unittest
 
 import numpy as np
 
-from dbp_metrics.experimental.half_similarity import Config, cosine
+from dbmetrics.experimental.half_similarity import Config, cosine
 
 
 class EmbeddingChangeNotebookTests(unittest.TestCase):

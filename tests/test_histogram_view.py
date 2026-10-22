@@ -3,12 +3,12 @@ import json
 from pathlib import Path
 import unittest
 
-from dbp_metrics.experimental.half_similarity import histogram
+from dbmetrics.experimental.half_similarity import histogram
 
 
 class HistogramViewTests(unittest.TestCase):
     def test_frame_counts_sum_to_the_existing_half_histogram(self):
-        path = Path(__file__).parents[1] / "src/dbp_metrics/experimental/histogram_view.py"
+        path = Path(__file__).parents[1] / "src/dbmetrics/experimental/histogram_view.py"
         spec = importlib.util.spec_from_file_location("histogram_view", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)

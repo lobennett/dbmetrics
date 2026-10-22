@@ -26,7 +26,7 @@ def pcm(samples):
 class PilotAudioTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics._audio")
+            self.subject = importlib.import_module("dbmetrics._audio")
         except ModuleNotFoundError:
             self.fail("pilot_audio implementation is not available")
 
@@ -332,7 +332,7 @@ class PilotAudioTests(unittest.TestCase):
 class RealFFmpegAudioTests(unittest.TestCase):
     def setUp(self):
         try:
-            self.subject = importlib.import_module("dbp_metrics._audio")
+            self.subject = importlib.import_module("dbmetrics._audio")
         except ModuleNotFoundError:
             self.fail("pilot_audio implementation is not available")
         temporary = tempfile.TemporaryDirectory(prefix="dbp-audio-real-")
